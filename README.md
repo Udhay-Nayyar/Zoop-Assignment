@@ -23,7 +23,8 @@ A small full-stack application for managing delivery agents. The Express API pro
 
 ## Architecture
 
-The backend follows `routes -> controllers -> services -> repositories`. Services own cache access; repositories own database access. Controllers translate HTTP requests and responses, while validators and middleware handle request validation and errors. The frontend calls same-origin `/api` paths, which Next.js rewrites to the backend.
+The backend follows `routes -> controllers -> services -> repositories`. Services own cache access; repositories own database access. Controllers translate HTTP requests and responses, while validators and middleware handle request validation and errors. The frontend calls same-origin `/api` paths, which Next.js rewrites to the backend
+using `VITE_API_URL`.
 
 ```text
 delivery-agent-management/
@@ -111,7 +112,7 @@ For single-instance AWS EC2 production deployment instructions, see
 
 The Compose database and Redis ports, and the backend URLs, must agree. Defaults are PostgreSQL on `localhost:5432` and Redis on `localhost:6379`. If either port is already occupied, use the Compose port variables and update the corresponding backend URLs before starting the backend; see [Troubleshooting](#troubleshooting).
 
-On Windows PowerShell, this example starts Compose on alternate host ports. In `backend/.env`, change `PORT` to `3100`, change the PostgreSQL URL's port from `5432` to `55432`, and change `REDIS_URL`'s port from `6379` to `56379`. In `frontend/.env.local`, set `BACKEND_URL=http://localhost:3100`. Start the frontend on port 3101 with `npm run dev -- -p 3101`.
+On Windows PowerShell, this example starts Compose on alternate host ports. In `backend/.env`, change `PORT` to `3100`, change the PostgreSQL URL's port from `5432` to `55432`, and change `REDIS_URL`'s port from `6379` to `56379`. In `frontend/.env.local`, set `VITE_API_URL=http://localhost:3100`. Start the frontend on port 3101 with `npm run dev -- -p 3101`.
 
 ```powershell
 $env:POSTGRES_PORT = "55432"
@@ -138,7 +139,7 @@ All backend variables have local-development defaults and are optional for the d
 
 | Name | Required? | Default | Description |
 | --- | --- | --- | --- |
-| `BACKEND_URL` | No | `http://localhost:3000` | Backend origin used by the Next.js `/api/:path*` rewrite. |
+| `VITE_API_URL` | No | `http://localhost:3000` | Backend origin used by the Next.js API and health rewrites. Set to `http://54.161.105.66` for production. |
 
 ### Docker Compose overrides
 
@@ -362,7 +363,7 @@ With Docker, the backend, and frontend running:
 
 ## Troubleshooting
 
-- **Port already in use:** change `POSTGRES_PORT` or `REDIS_PORT` for Compose and update `DATABASE_URL` or `REDIS_URL` in `backend/.env` to match. If the frontend or backend port is occupied, set backend `PORT` or adjust the frontend dev command/rewrite configuration. Ensure `BACKEND_URL` matches the actual backend origin.
+- **Port already in use:** change `POSTGRES_PORT` or `REDIS_PORT` for Compose and update `DATABASE_URL` or `REDIS_URL` in `backend/.env` to match. If the frontend or backend port is occupied, set backend `PORT` or adjust the frontend dev command/rewrite configuration. Ensure `VITE_API_URL` matches the actual backend origin.
 - **Docker is not running:** start Docker Desktop / Docker Engine, then retry `docker compose up -d --wait`.
 - **Migration fails:** check PostgreSQL health with `docker compose ps`, confirm `DATABASE_URL` targets the Compose database, and inspect logs with `docker compose logs postgres`. Migration `002` needs permission to create the `pg_trgm` extension.
 - **Redis is down:** API reads and writes continue using PostgreSQL; cache headers may show `MISS`, and health reports Redis as `down` with overall `degraded` status while the database is available. Check `docker compose logs redis`.

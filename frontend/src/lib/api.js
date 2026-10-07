@@ -8,37 +8,60 @@ export class ApiError extends Error {
   }
 }
 
+const REQUEST_TIMEOUT_MS = 8000;
+
 async function request(path, { method = "GET", data, signal } = {}) {
-  let response;
+  const controller = new AbortController();
+  let timedOut = false;
+  const timeoutId = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, REQUEST_TIMEOUT_MS);
+  const abortRequest = () => controller.abort();
+
+  if (signal?.aborted) controller.abort();
+  else signal?.addEventListener("abort", abortRequest, { once: true });
+
   try {
-    response = await fetch(path, {
+    const response = await fetch(path, {
       method,
-      signal,
+      signal: controller.signal,
       headers: data === undefined ? undefined : { "Content-Type": "application/json" },
       body: data === undefined ? undefined : JSON.stringify(data)
     });
+
+    if (response.status === 204) return undefined;
+
+    const body = await response.json().catch(() => null);
+    if (!response.ok) {
+      const error = body?.error || {};
+      throw new ApiError({
+        status: response.status,
+        code: error.code || "REQUEST_FAILED",
+        message: error.message || "The request could not be completed",
+        details: error.details || []
+      });
+    }
+    return body;
   } catch (error) {
+    if (error instanceof ApiError || signal?.aborted) throw error;
+    if (timedOut) {
+      throw new ApiError({
+        status: 0,
+        code: "REQUEST_TIMEOUT",
+        message: "The server did not respond within 8 seconds"
+      });
+    }
     if (error.name === "AbortError") throw error;
     throw new ApiError({
       status: 0,
       code: "NETWORK_ERROR",
       message: "Cannot reach the server"
     });
+  } finally {
+    clearTimeout(timeoutId);
+    signal?.removeEventListener("abort", abortRequest);
   }
-
-  if (response.status === 204) return undefined;
-
-  const body = await response.json().catch(() => null);
-  if (!response.ok) {
-    const error = body?.error || {};
-    throw new ApiError({
-      status: response.status,
-      code: error.code || "REQUEST_FAILED",
-      message: error.message || "The request could not be completed",
-      details: error.details || []
-    });
-  }
-  return body;
 }
 
 function queryString(params = {}) {

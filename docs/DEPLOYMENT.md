@@ -101,8 +101,9 @@ backend address remains stable across instance stops and starts.
 
 1. Import the repository.
 2. Set **Root Directory** to `frontend`.
-3. Set `BACKEND_URL` to `http://<ELASTIC_IP>`.
-4. Deploy. Redeploy after changing `BACKEND_URL`; Next.js rewrites are
+3. Set `VITE_API_URL` to `http://54.161.105.66` (or the backend's stable public
+   IP/domain).
+4. Deploy. Redeploy after changing `VITE_API_URL`; Next.js rewrites are
    evaluated at build time.
 
 ### Render
@@ -111,7 +112,8 @@ backend address remains stable across instance stops and starts.
    `frontend`.
 2. Set the build command to `npm install && npm run build`.
 3. Set the start command to `npm start`.
-4. Set `BACKEND_URL` to `http://<ELASTIC_IP>` and deploy.
+4. Set `VITE_API_URL` to `http://54.161.105.66` (or the backend's stable public
+   IP/domain) and deploy.
 
 Render's free tier may have cold starts. If a platform rejects a raw IP as a
 backend URL, use a hostname such as a `nip.io` name or a real domain. HTTPS can
@@ -187,7 +189,7 @@ retained.
 - **Build runs out of memory:** enable the optional 1 GB swap using
   `./deploy/setup-ec2.sh --with-swap`, or build elsewhere and transfer/pull
   the image.
-- **Frontend reaches the wrong backend:** update `BACKEND_URL` in the hosting
+- **Frontend reaches the wrong backend:** update `VITE_API_URL` in the hosting
   provider and redeploy; changing the variable without rebuilding does not
   update Next.js rewrites.
 - **Disk full:** inspect `df -h`, Docker images/volumes, and `backups/`; retain
