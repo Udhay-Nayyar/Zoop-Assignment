@@ -13,6 +13,8 @@ import Pagination from "./Pagination";
 import ConfirmDialog from "./ConfirmDialog";
 import AgentFilters from "./AgentFilters";
 import AgentResults from "./AgentResults";
+import { buttonVariants } from "../../components/ui/button";
+import { Plus } from "lucide-react";
 
 const defaultState = { page: 1, limit: 10, sortBy: "createdAt", order: "desc" };
 
@@ -103,8 +105,11 @@ function AgentListContent() {
   return (
     <main className="page-shell">
       <div className="page-heading">
-        <div><p className="eyebrow">OPERATIONS</p><h1>Delivery agents</h1><p className="page-subtitle">Manage your delivery team and service coverage.</p></div>
-        <Link className="button button-primary hidden sm:inline-flex" href="/agents/new">＋ Add agent</Link>
+        <div><p className="eyebrow">Team directory</p><h1>Delivery agents</h1><p className="page-subtitle">Manage your delivery team and service coverage.</p></div>
+        <Link className={`${buttonVariants()} add-agent-button`} href="/agents/new">
+          <Plus aria-hidden="true" size={15} />
+          Add agent
+        </Link>
       </div>
       <AgentFilters
         state={state}
@@ -114,7 +119,7 @@ function AgentListContent() {
         filtersActive={filtersActive}
         clearFilters={clearFilters}
       />
-      <div aria-live="polite" className="table-topline">{result.updating && <span className="updating-label">Updating results…</span>}</div>
+      <div aria-live="polite" className="table-topline">{result.updating && <span className="updating-label">Updating results</span>}</div>
       {result.loading && !result.meta ? <Skeleton rows={6} /> : result.error && !result.meta ? <ErrorState message={result.error.message} onRetry={result.reload} /> : items.length === 0 ? <EmptyState filtered={filtersActive} onClear={clearFilters} /> : (
         <>
           <AgentResults items={items} updating={result.updating} onDelete={deletion.open} />
@@ -122,7 +127,7 @@ function AgentListContent() {
         </>
       )}
       <ConfirmDialog open={Boolean(deletion.agent)} title={`Delete "${deletion.agent?.fullName}"? This cannot be undone.`} onCancel={deletion.close} onConfirm={deletion.confirm} busy={deletion.busy} error={deletion.error}>
-        <p>The agent will be permanently removed from the system.</p>
+        The agent will be permanently removed from the system.
       </ConfirmDialog>
     </main>
   );

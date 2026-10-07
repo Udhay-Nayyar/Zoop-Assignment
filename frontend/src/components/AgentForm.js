@@ -6,6 +6,7 @@ import { createAgent, updateAgent, ApiError } from "../lib/api";
 import { validateAgent } from "../lib/validation";
 import { useToast } from "./Toast";
 import AgentFormFields from "./AgentFormFields";
+import { Button } from "../../components/ui/button";
 
 const emptyValues = { fullName: "", phone: "", email: "", serviceArea: "", status: "active" };
 const fields = ["fullName", "phone", "email", "serviceArea", "status"];
@@ -126,8 +127,8 @@ export default function AgentForm({ initialAgent, mode = "create" }) {
       {formError && <p className="form-error-banner" role="alert">{formError}</p>}
       <AgentFormFields values={values} errors={errors} onChange={change} onBlur={validateField} />
       <div className="form-actions">
-        <button className="button button-secondary" onClick={cancel} type="button">Cancel</button>
-        <button className="button button-primary" disabled={saving} type="submit">{saving ? "Saving…" : mode === "create" ? "Create agent" : "Save changes"}</button>
+        <Button onClick={cancel} type="button" variant="outline">Cancel</Button>
+        <Button disabled={saving} type="submit">{saving ? "Saving…" : mode === "create" ? "Create agent" : "Save changes"}</Button>
       </div>
     </form>
   );

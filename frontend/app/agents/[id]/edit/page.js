@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useParams } from "next/navigation";
 import useAgent from "../../../../src/hooks/useAgent";
 import AgentForm from "../../../../src/components/AgentForm";
@@ -18,8 +19,8 @@ export default function EditAgentPage() {
 
   return (
     <main className="page-shell form-shell">
-      <Link className="back-link" href={`/agents/${agent.id}`}>← Back to agent</Link>
-      <div className="page-heading"><div><p className="eyebrow">TEAM</p><h1>Edit agent</h1><p className="page-subtitle">Update {agent.fullName}’s details.</p></div></div>
+      <Link className="back-link" href={`/agents/${agent.id}`}><ArrowLeft aria-hidden="true" size={14} />Back to agent</Link>
+      <div className="page-heading"><div><p className="eyebrow">Team directory</p><h1>Edit agent</h1><p className="page-subtitle">Update {agent.fullName}’s details.</p></div></div>
       <AgentForm initialAgent={agent} mode="edit" />
     </main>
   );

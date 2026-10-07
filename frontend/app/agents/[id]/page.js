@@ -3,16 +3,19 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useRef, useState } from "react";
+import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { Button, buttonVariants } from "../../../components/ui/button";
 import useAgent from "../../../src/hooks/useAgent";
 import StatusBadge from "../../../src/components/StatusBadge";
 import Skeleton from "../../../src/components/Skeleton";
 import ErrorState from "../../../src/components/ErrorState";
 import ConfirmDialog from "../../../src/components/ConfirmDialog";
 import { deleteAgent, ApiError } from "../../../src/lib/api";
+import { formatFullDate, formatRelativeDate, getInitials } from "../../../src/lib/formatDate";
 import { useToast } from "../../../src/components/Toast";
 
-function formatDate(value) {
-  return new Intl.DateTimeFormat(undefined, { dateStyle: "long", timeStyle: "short" }).format(new Date(value));
+function RelativeDate({ value }) {
+  return <time dateTime={value} title={formatFullDate(value)}>{formatRelativeDate(value)}</time>;
 }
 
 export default function AgentDetailPage() {
@@ -53,23 +56,37 @@ export default function AgentDetailPage() {
 
   return (
     <main className="page-shell form-shell">
-      <Link className="back-link" href="/agents">← Back to agents</Link>
+      <Link className="back-link" href="/agents"><ArrowLeft aria-hidden="true" size={14} />Back to agents</Link>
       <section className="detail-card">
         <div className="detail-heading">
-          <div><p className="eyebrow">AGENT PROFILE</p><h1>{agent.fullName}</h1><StatusBadge status={agent.status} /></div>
-          <div className="detail-actions"><Link className="button button-secondary" href={`/agents/${agent.id}/edit`}>Edit</Link><button className="button button-danger" onClick={(event) => { triggerRef.current = event.currentTarget; setDialogOpen(true); }} type="button">Delete</button></div>
+          <div className="detail-identity">
+            <span aria-hidden="true" className="agent-avatar agent-avatar-large">{getInitials(agent.fullName)}</span>
+            <div>
+              <p className="eyebrow">Agent profile</p>
+              <h1>{agent.fullName}</h1>
+              <StatusBadge status={agent.status} />
+            </div>
+          </div>
+          <div className="detail-actions">
+            <Link className={buttonVariants({ variant: "outline" })} href={`/agents/${agent.id}/edit`}>
+              <Pencil aria-hidden="true" size={14} />Edit
+            </Link>
+            <Button onClick={(event) => { triggerRef.current = event.currentTarget; setDialogOpen(true); }} type="button" variant="destructive">
+              <Trash2 aria-hidden="true" size={14} />Delete
+            </Button>
+          </div>
         </div>
         <dl className="detail-grid">
           <div className="detail-item"><dt>Phone</dt><dd>{agent.phone}</dd></div>
           <div className="detail-item"><dt>Email</dt><dd>{agent.email}</dd></div>
           <div className="detail-item"><dt>Service area</dt><dd>{agent.serviceArea}</dd></div>
           <div className="detail-item"><dt>Agent ID</dt><dd>{agent.id}</dd></div>
-          <div className="detail-item"><dt>Created</dt><dd>{formatDate(agent.createdAt)}</dd></div>
-          <div className="detail-item"><dt>Last updated</dt><dd>{formatDate(agent.updatedAt)}</dd></div>
+          <div className="detail-item"><dt>Created</dt><dd><RelativeDate value={agent.createdAt} /></dd></div>
+          <div className="detail-item"><dt>Last updated</dt><dd><RelativeDate value={agent.updatedAt} /></dd></div>
         </dl>
       </section>
       <ConfirmDialog open={dialogOpen} title={`Delete "${agent.fullName}"? This cannot be undone.`} onCancel={closeDialog} onConfirm={confirmDelete} busy={busy} error={dialogError}>
-        <p>The agent will be permanently removed from the system.</p>
+        The agent will be permanently removed from the system.
       </ConfirmDialog>
     </main>
   );

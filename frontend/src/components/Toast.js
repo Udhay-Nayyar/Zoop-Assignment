@@ -1,32 +1,23 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
+import { toast } from "sonner";
+import { Toaster } from "../../components/ui/sonner";
 
 const ToastContext = createContext(null);
 
 export function ToastProvider({ children }) {
-  const [toasts, setToasts] = useState([]);
-  const dismiss = useCallback((id) => {
-    setToasts((current) => current.filter((toast) => toast.id !== id));
-  }, []);
   const showToast = useCallback((message, type = "success") => {
-    const id = `${Date.now()}-${Math.random()}`;
-    setToasts((current) => [...current, { id, message, type }]);
-    setTimeout(() => dismiss(id), 4000);
-  }, [dismiss]);
+    const options = { duration: 4000 };
+    if (type === "error") toast.error(message, options);
+    else toast.success(message, options);
+  }, []);
   const value = useMemo(() => ({ showToast }), [showToast]);
 
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="toast-area" aria-live="polite" aria-atomic="true">
-        {toasts.map((toast) => (
-          <div className={`toast toast-${toast.type}`} key={toast.id}>
-            <span>{toast.message}</span>
-            <button type="button" aria-label="Dismiss notification" onClick={() => dismiss(toast.id)}>×</button>
-          </div>
-        ))}
-      </div>
+      <Toaster position="bottom-right" closeButton />
     </ToastContext.Provider>
   );
 }

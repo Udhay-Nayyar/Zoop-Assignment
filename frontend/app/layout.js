@@ -1,6 +1,13 @@
 import "./globals.css";
-import Link from "next/link";
+import { Plus_Jakarta_Sans } from "next/font/google";
+import Sidebar from "../src/components/Sidebar";
 import { ToastProvider } from "../src/components/Toast";
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-plus-jakarta",
+  display: "swap"
+});
 
 export const metadata = {
   title: "Delivery Agent Management",
@@ -10,19 +17,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
+      <body className={plusJakarta.variable}>
         <ToastProvider>
-          <header className="app-header">
-            <div className="header-inner">
-              <Link className="brand" href="/agents"><span aria-hidden="true" className="brand-mark">↗</span><span>Delivery Agent Management</span></Link>
-              <nav aria-label="Main navigation" className="header-actions">
-                <Link className="header-link" href="/agents">Agents</Link>
-                <Link className="button button-primary" href="/agents/new">＋ Add agent</Link>
-              </nav>
+          <div className="app-layout">
+            <Sidebar />
+            <div className="app-main">
+              {children}
+              <footer className="site-footer">Delivery Agent Management System</footer>
             </div>
-          </header>
-          {children}
-          <footer className="site-footer">Delivery Agent Management System</footer>
+          </div>
         </ToastProvider>
       </body>
     </html>

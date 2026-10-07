@@ -1,15 +1,18 @@
 import Link from "next/link";
+import { Search, UsersRound } from "lucide-react";
+import { Button, buttonVariants } from "../../components/ui/button";
 
 export default function EmptyState({ filtered, onClear }) {
+  const Icon = filtered ? Search : UsersRound;
   return (
     <section className="state-panel">
-      <div className="state-icon" aria-hidden="true">{filtered ? "⌕" : "+"}</div>
-      <h2>{filtered ? "No agents match your filters" : "No agents yet"}</h2>
-      <p>{filtered ? "Try adjusting your search or filters." : "Add your first delivery agent to get started."}</p>
+      <span aria-hidden="true" className="state-icon"><Icon size={19} /></span>
+      <h2>{filtered ? "No agents match these filters" : "No agents yet"}</h2>
+      <p>{filtered ? "Try changing your search or filters." : "Add an agent to start building your team list."}</p>
       {filtered ? (
-        <button className="button button-secondary" onClick={onClear} type="button">Clear filters</button>
+        <Button onClick={onClear} type="button" variant="outline">Clear filters</Button>
       ) : (
-        <Link className="button button-primary" href="/agents/new">Add agent</Link>
+        <Link className={buttonVariants()} href="/agents/new">Add agent</Link>
       )}
     </section>
   );

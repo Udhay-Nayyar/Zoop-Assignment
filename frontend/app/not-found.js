@@ -1,12 +1,14 @@
 import Link from "next/link";
+import { FileQuestion } from "lucide-react";
+import { buttonVariants } from "../components/ui/button";
 
 export default function NotFound() {
   return (
     <main className="page-shell not-found-page">
-      <div className="state-icon" aria-hidden="true">?</div>
+      <span className="state-icon" aria-hidden="true"><FileQuestion size={19} /></span>
       <h1>Page not found</h1>
       <p>We couldn’t find the page you were looking for.</p>
-      <Link className="button button-primary" href="/agents">Back to agents</Link>
+      <Link className={buttonVariants()} href="/agents">Back to agents</Link>
     </main>
   );
 }

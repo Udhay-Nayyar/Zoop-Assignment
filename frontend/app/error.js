@@ -1,12 +1,15 @@
 "use client";
 
+import { CircleAlert } from "lucide-react";
+import { Button } from "../components/ui/button";
+
 export default function GlobalError({ reset }) {
   return (
     <main className="page-shell not-found-page" role="alert">
-      <div className="state-icon" aria-hidden="true">!</div>
-      <h1>Something went wrong</h1>
+      <span className="state-icon" aria-hidden="true"><CircleAlert size={19} /></span>
+      <h1>Couldn’t load this page</h1>
       <p>The page could not be displayed. Please try again.</p>
-      <button className="button button-primary" onClick={() => reset()} type="button">Try again</button>
+      <Button onClick={() => reset()} type="button">Retry</Button>
     </main>
   );
 }
