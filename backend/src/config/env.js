@@ -9,7 +9,8 @@ const schema = z.object({
   REDIS_URL: z.string().url().default("redis://localhost:6379"),
   CACHE_TTL_AGENT_SECONDS: positiveInteger.default(300),
   CACHE_TTL_LIST_SECONDS: positiveInteger.default(60),
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development")
+  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  CORS_ORIGINS: z.string().optional().default("")
 });
 
 const parsed = schema.safeParse(process.env);
@@ -23,6 +24,6 @@ module.exports = {
   redisUrl: parsed.data.REDIS_URL,
   cacheTtlAgentSeconds: parsed.data.CACHE_TTL_AGENT_SECONDS,
   cacheTtlListSeconds: parsed.data.CACHE_TTL_LIST_SECONDS,
-  nodeEnv: parsed.data.NODE_ENV
+  nodeEnv: parsed.data.NODE_ENV,
+  corsOrigins: parsed.data.CORS_ORIGINS.split(",").map((origin) => origin.trim()).filter(Boolean)
 };
-

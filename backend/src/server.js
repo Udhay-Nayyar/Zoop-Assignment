@@ -14,7 +14,7 @@ async function start() {
   server = http.createServer(app);
   await new Promise((resolve, reject) => {
     server.once("error", reject);
-    server.listen(config.port, () => {
+    server.listen(config.port, "0.0.0.0", () => {
       server.removeListener("error", reject);
       console.log(`Server listening on port ${config.port}`);
       resolve();

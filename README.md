@@ -106,6 +106,9 @@ Open:
 - API: <http://localhost:3000>
 - Health: <http://localhost:3000/health>
 
+For single-instance AWS EC2 production deployment instructions, see
+[docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md).
+
 The Compose database and Redis ports, and the backend URLs, must agree. Defaults are PostgreSQL on `localhost:5432` and Redis on `localhost:6379`. If either port is already occupied, use the Compose port variables and update the corresponding backend URLs before starting the backend; see [Troubleshooting](#troubleshooting).
 
 On Windows PowerShell, this example starts Compose on alternate host ports. In `backend/.env`, change `PORT` to `3100`, change the PostgreSQL URL's port from `5432` to `55432`, and change `REDIS_URL`'s port from `6379` to `56379`. In `frontend/.env.local`, set `BACKEND_URL=http://localhost:3100`. Start the frontend on port 3101 with `npm run dev -- -p 3101`.
